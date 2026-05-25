@@ -1,0 +1,82 @@
+---
+interface Props {
+  class?: string
+  glowSize?: 'sm' | 'md' | 'lg'
+  lineColor?: 'purple' | 'gold' | 'custom'
+}
+
+const {
+  class: className = '',
+  glowSize = 'md',
+  lineColor = 'gold'
+} = Astro.props
+
+const glowClasses = {
+  purple: {
+    sm: 'drop-shadow-[0_0_8px_rgba(139,92,246,0.35)]',
+    md: 'drop-shadow-[0_0_15px_rgba(139,92,246,0.55)]',
+    lg: 'drop-shadow-[0_0_22px_rgba(139,92,246,0.75)]'
+  },
+  gold: {
+    sm: 'drop-shadow-[0_0_8px_rgba(199,168,107,0.35)]',
+    md: 'drop-shadow-[0_0_15px_rgba(199,168,107,0.55)]',
+    lg: 'drop-shadow-[0_0_22px_rgba(199,168,107,0.75)]'
+  },
+  custom: {
+    sm: 'drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]',
+    md: 'drop-shadow-[0_0_15px_rgba(255,255,255,0.35)]',
+    lg: 'drop-shadow-[0_0_22px_rgba(255,255,255,0.5)]'
+  }
+}
+
+const lineColors = {
+  purple: {
+    left: 'bg-linear-to-r from-transparent to-theme-purple-accent/60',
+    right: 'bg-linear-to-l from-transparent to-theme-purple-accent/60',
+    dot: 'bg-theme-purple-accent/80 shadow-[0_0_8px_rgba(139,92,246,0.7)]'
+  },
+  gold: {
+    left: 'bg-linear-to-r from-transparent to-theme-gold/60',
+    right: 'bg-linear-to-l from-transparent to-theme-gold/60',
+    dot: 'bg-theme-gold/80 shadow-[0_0_8px_rgba(199,168,107,0.7)]'
+  },
+  custom: {
+    left: 'bg-linear-to-r from-transparent to-white/40',
+    right: 'bg-linear-to-l from-transparent to-white/40',
+    dot: 'bg-white/60 shadow-[0_0_8px_rgba(255,255,255,0.4)]'
+  }
+}
+
+const colors = lineColors[lineColor]
+const activeGlowClass = glowClasses[lineColor][glowSize]
+---
+
+<div class:list={["flex items-center justify-center gap-4 select-none pointer-events-none", className]} aria-hidden="true">
+  <!-- Línea decorativa izquierda -->
+  <span class:list={["h-px w-10 sm:w-20 md:w-28 transition-all duration-500", colors.left]}></span>
+  
+  <!-- Detalle geométrico: punto decorativo izquierdo -->
+  <span class:list={["size-1 rounded-full transition-all duration-500", colors.dot]}></span>
+  
+  <!-- Icono central: rombo.png con brillo premium -->
+  <div class="relative flex items-center justify-center px-1 pointer-events-auto">
+    <img
+      src="/rombo.png"
+      alt=""
+      class:list={[
+        "h-7 w-auto object-contain select-none",
+        activeGlowClass
+      ]}
+      width="28"
+      height="28"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <!-- Detalle geométrico: punto decorativo derecho -->
+  <span class:list={["size-1 rounded-full transition-all duration-500", colors.dot]}></span>
+
+  <!-- Línea decorativa derecha -->
+  <span class:list={["h-px w-10 sm:w-20 md:w-28 transition-all duration-500", colors.right]}></span>
+</div>

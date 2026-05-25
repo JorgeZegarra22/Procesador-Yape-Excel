@@ -1,0 +1,179 @@
+---
+import { ClientRouter } from 'astro:transitions'
+import Analytics from '@vercel/analytics/astro'
+
+import '@/styles/global.css'
+
+import { fixedTitle } from '@/consts/pageTitles'
+
+const SITE_URL = 'https://www.tekarifa.com'
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og.jpg`
+const DEFAULT_OG_ALT = 'NINJA RIFAS'
+
+interface Props {
+  title: string
+  description?: string
+  canonical?: string
+  robots?: string
+  ogImage?: string
+  ogImageAlt?: string
+  ogUrl?: string
+  ogType?: 'website' | 'article' | 'profile'
+}
+
+const {
+  title = fixedTitle,
+  description = 'NINJA RIFAS: la plataforma definitiva de sorteos y rifas premium organizada para toda la comunidad.',
+  canonical,
+  robots,
+  ogImage = DEFAULT_OG_IMAGE,
+  ogImageAlt = DEFAULT_OG_ALT,
+  ogUrl = canonical ?? SITE_URL,
+  ogType = 'website',
+} = Astro.props
+
+// Datos estructurados globales (válidos para todas las páginas).
+// El SportsEvent específico vive en la home para evitar duplicar JSON-LD
+// que solo aplica al evento principal en cada ruta.
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE_URL}/#website`,
+  url: `${SITE_URL}/`,
+  name: 'NINJA RIFAS',
+  alternateName: ['NINJA RIFAS'],
+  description:
+    'Sitio oficial informativo de NINJA RIFAS, la plataforma oficial de sorteos y rifas premium.',
+  inLanguage: 'es-ES',
+  publisher: { '@id': `${SITE_URL}/#organization` },
+}
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${SITE_URL}/#organization`,
+  name: 'NINJA RIFAS',
+  url: `${SITE_URL}/`,
+  logo: `${SITE_URL}/Logoo.png`,
+  sameAs: [
+    'https://www.tiktok.com/@masokugg',
+    'https://www.instagram.com/masokugg/',
+    'https://www.kick.com/masokugg',
+  ],
+  founder: {
+    '@type': 'Person',
+    name: 'Masoku',
+    url: 'https://www.kick.com/masokugg',
+  },
+}
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {title}
+    </title>
+
+    <link rel="icon" type="image/png" href="/Logoo.png" />
+    <link rel="apple-touch-icon" href="/Logoo.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <link
+      rel="preload"
+      href="/fonts/cinzel-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+      fetchpriority="low"
+    />
+    <meta name="description" content={description} />
+    <meta name="author" content="Masoku" />
+    <meta name="theme-color" content="#0a1024" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {robots && <meta name="robots" content={robots} />}
+
+    <meta property="og:url" content={ogUrl} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:locale:alternate" content="es_MX" />
+    <meta property="og:locale:alternate" content="es_AR" />
+    <meta property="og:locale:alternate" content="es_CO" />
+    <meta property="og:site_name" content="NINJA RIFAS" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@masokugg" />
+    <meta name="twitter:creator" content="@masokugg" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(websiteJsonLd)}
+    />
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(organizationJsonLd)}
+    />
+    <slot name="head" />
+    <ClientRouter />
+    <Analytics />
+    <script>
+      type AstroNavigationEvent = Event & {
+        from: URL
+        to: URL
+      }
+
+      type AstroBeforeSwapEvent = AstroNavigationEvent & {
+        newDocument: Document
+      }
+
+      const SKIP_BOXERS_ENTER_ATTR = 'data-skip-boxers-enter'
+      const BOXERS_INDEX_PATH = '/miembros'
+      const BOXER_DETAIL_PATH_RE = /^\/miembros\/[^/]+$/
+
+      const getNormalizedPathname = (url: URL | string) => {
+        const pathname =
+          url instanceof URL ? url.pathname : new URL(url, window.location.href).pathname
+        return pathname === '/' ? pathname : pathname.replace(/\/$/, '')
+      }
+
+      const isReturningFromBoxerDetail = (event: AstroNavigationEvent) => {
+        const fromPath = getNormalizedPathname(event.from)
+        const toPath = getNormalizedPathname(event.to)
+
+        return toPath === BOXERS_INDEX_PATH && BOXER_DETAIL_PATH_RE.test(fromPath)
+      }
+
+      document.addEventListener('astro:before-swap', (event) => {
+        const transitionEvent = event as AstroBeforeSwapEvent
+        const shouldSkipBoxersEnter = isReturningFromBoxerDetail(transitionEvent)
+
+        transitionEvent.newDocument.documentElement.toggleAttribute(
+          SKIP_BOXERS_ENTER_ATTR,
+          shouldSkipBoxersEnter,
+        )
+      })
+    </script>
+  </head>
+  <body>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-black focus:outline-none">
+      Saltar al contenido principal
+    </a>
+    <main id="main-content">
+      <slot />
+    </main>
+  </body>
+</html>

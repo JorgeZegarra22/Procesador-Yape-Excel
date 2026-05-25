@@ -1,0 +1,1261 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import Header from '@/sections/Header.astro'
+
+const title = 'Procesador Yape — NINJA RIFAS'
+const description = 'Sube tu Excel de Yape, calcula oportunidades y genera la lista para el sorteo'
+const canonical = 'https://www.tekarifa.com/procesador-yape'
+
+export const prerender = true
+---
+
+<Layout title={title} description={description} canonical={canonical}>
+  <Header />
+
+  <div class="relative min-h-screen w-full overflow-hidden">
+    <!-- Imagen de fondo Masoku opacada para Procesador Yape -->
+    <div
+      aria-hidden="true"
+      class="absolute inset-0 -z-30 bg-cover bg-center bg-no-repeat opacity-[0.06] filter blur-[3px]"
+      style="background-image: url('/masoku.png');"
+    ></div>
+
+    <!-- Halos de fondo y gradiente -->
+    <div
+      aria-hidden="true"
+      class="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_50%_20%,rgba(199,168,107,0.18),transparent_35%),linear-gradient(180deg,var(--color-theme-midnight)_0%,#050507_100%)]"
+    ></div>
+
+    <section class="yp-page">
+    <!-- ═══ PAGE HEADER ═══ -->
+    <header class="yp-header">
+      <div class="yp-logo">
+        <img src="/Logoo.png" alt="NINJA RIFAS" width="36" height="36" />
+        <span class="yp-logo-text">NINJA <span style="color:var(--yp-gold)">RIFAS</span></span>
+      </div>
+      <div class="yp-title-wrap">
+        <p class="yp-eyebrow">HERRAMIENTA DE GESTIÓN</p>
+        <h1 class="yp-title">PROCESADOR YAPE</h1>
+        <p class="yp-subtitle">Sube tu Excel, calcula oportunidades y genera la lista para el sorteo</p>
+      </div>
+    </header>
+
+    <!-- ═══ PASO 1 — ARCHIVO ═══ -->
+    <div class="yp-card" id="step1">
+      <div class="yp-step-header">
+        <span class="yp-step-num">1</span>
+        <span class="yp-step-label">ARCHIVO EXCEL DE YAPE</span>
+      </div>
+      <div class="yp-drop" id="dropZone">
+        <input type="file" id="fileInput" accept=".xlsx,.xls" hidden />
+        <div class="yp-drop-icon">📂</div>
+        <p class="yp-drop-main">Arrastra tu archivo Excel aquí</p>
+        <p class="yp-drop-sub">o <span class="yp-drop-link" id="browseLink">selecciona un archivo</span> (.xlsx, .xls)</p>
+      </div>
+      <div class="yp-file-info" id="fileInfo" style="display:none">
+        <span class="yp-file-icon">📄</span>
+        <div class="yp-file-details">
+          <span class="yp-file-name" id="fileName"></span>
+          <span class="yp-file-rows" id="fileRows"></span>
+        </div>
+        <button class="yp-file-remove" id="removeFile" title="Quitar archivo">✕</button>
+      </div>
+      <div class="yp-progress-wrap" id="progressWrap" style="display:none">
+        <div class="yp-progress-bar"><div class="yp-progress-fill" id="progressFill"></div></div>
+        <span class="yp-progress-text" id="progressText">Leyendo archivo…</span>
+      </div>
+    </div>
+
+    <!-- ═══ FILTRO DE FECHA y HORA ═══ -->
+    <div class="yp-card" id="stepDate" style="display:none">
+      <div class="yp-step-header">
+        <span class="yp-step-num">📅</span>
+        <span class="yp-step-label">FILTRAR POR FECHA Y HORA DE OPERACIÓN</span>
+      </div>
+      <div class="yp-date-row">
+        <div class="flex-1 min-w-[200px] flex flex-col gap-1.5 text-left">
+          <span class="text-[10px] font-bold tracking-wider text-theme-gold/75">FECHA DE OPERACIÓN</span>
+          <select id="dateFilter" class="yp-select w-full" style="padding: 10px 14px; font-size: 14px;">
+            <option value="all">Todas las fechas</option>
+          </select>
+        </div>
+        <div class="w-[200px] flex flex-col gap-1.5 text-left">
+          <span class="text-[10px] font-bold tracking-wider text-theme-gold/75">DESDE HORA (INCLUSIVO)</span>
+          <select id="hourFilter" class="yp-select w-full" style="padding: 10px 14px; font-size: 14px;">
+            <option value="0" selected>00:00 (Todo el día)</option>
+            <option value="1">01:00 en adelante</option>
+            <option value="2">02:00 en adelante</option>
+            <option value="3">03:00 en adelante</option>
+            <option value="4">04:00 en adelante</option>
+            <option value="5">05:00 en adelante</option>
+            <option value="6">06:00 en adelante</option>
+            <option value="7">07:00 en adelante</option>
+            <option value="8">08:00 en adelante</option>
+            <option value="9">09:00 en adelante</option>
+            <option value="10">10:00 en adelante</option>
+            <option value="11">11:00 en adelante</option>
+            <option value="12">12:00 en adelante</option>
+            <option value="13">13:00 en adelante</option>
+            <option value="14">14:00 en adelante</option>
+            <option value="15">15:00 en adelante</option>
+            <option value="16">16:00 en adelante</option>
+            <option value="17">17:00 en adelante</option>
+            <option value="18">18:00 en adelante</option>
+            <option value="19">19:00 en adelante</option>
+            <option value="20">20:00 en adelante</option>
+            <option value="21">21:00 en adelante</option>
+            <option value="22">22:00 en adelante</option>
+            <option value="23">23:00 en adelante</option>
+          </select>
+        </div>
+        <span class="yp-date-count flex items-end pb-3 text-xs text-white/50" id="dateCount"></span>
+      </div>
+    </div>
+
+    <!-- ═══ PASO 2 — TICKET ═══ -->
+    <div class="yp-card" id="step2">
+      <div class="yp-step-header">
+        <span class="yp-step-num">2</span>
+        <span class="yp-step-label">VALOR DEL TICKET</span>
+      </div>
+      <div class="yp-ticket-row">
+        <label class="yp-ticket-label">
+          <span class="yp-ticket-prefix">S/</span>
+          <input type="number" id="ticketInput" value="2" min="0.01" step="0.01" class="yp-input yp-ticket-input" />
+        </label>
+        <button class="yp-btn-gold" id="generateBtn">GENERAR LISTA</button>
+      </div>
+    </div>
+
+    <!-- ═══ PASO 3 — RESUMEN ═══ -->
+    <div class="yp-card" id="step3" style="display:none">
+      <div class="yp-step-header">
+        <span class="yp-step-num">3</span>
+        <span class="yp-step-label">RESUMEN DE PARTICIPANTES</span>
+      </div>
+      <div class="yp-stats" id="statsGrid"></div>
+
+      <input type="text" id="searchParticipant" class="yp-input yp-search" placeholder="Buscar participante por nombre…" />
+
+      <div class="yp-list-toolbar">
+        <span class="yp-range" id="tableRange"></span>
+        <select id="tablePageSize" class="yp-select">
+          <option value="50" selected>50 por página</option>
+          <option value="100">100 por página</option>
+          <option value="250">250 por página</option>
+          <option value="500">500 por página</option>
+        </select>
+      </div>
+
+      <div class="yp-table-wrap" id="tableWrap"></div>
+      <div class="yp-pagination" id="tablePagination"></div>
+    </div>
+
+    <!-- ═══ PASO 4 — LISTA PARA SORTEO ═══ -->
+    <div class="yp-card" id="step4" style="display:none">
+      <div class="yp-step-header">
+        <span class="yp-step-num">4</span>
+        <span class="yp-step-label">LISTA PARA SORTEO</span>
+      </div>
+
+      <input type="text" id="searchInput" class="yp-input yp-search" placeholder="Buscar participante por nombre…" />
+      <div class="yp-verify" id="verifyPanel" style="display:none"></div>
+
+      <div class="yp-list-toolbar">
+        <span class="yp-range" id="rangeLabel"></span>
+        <select id="pageSizeSelect" class="yp-select">
+          <option value="100">100 por página</option>
+          <option value="250">250 por página</option>
+          <option value="500">500 por página</option>
+        </select>
+      </div>
+
+      <div class="yp-list-container" id="listContainer"></div>
+      <div class="yp-pagination" id="pagination"></div>
+
+      <button class="yp-btn-gold yp-btn-copy" id="copyBtn">COPIAR LISTA COMPLETA</button>
+
+      <!-- Plataformas -->
+      <div class="yp-platforms">
+        <p class="yp-plat-title">PÉGALA EN UNA DE ESTAS PLATAFORMAS</p>
+        <div class="yp-plat-grid">
+          <a href="https://app-sorteos.com/es/apps/la-ruleta-decide" target="_blank" rel="noopener noreferrer" class="yp-plat-link featured">
+            <span class="yp-plat-badge">RECOMENDADA</span>
+            <span class="yp-plat-name">La Ruleta Decide</span>
+            <span class="yp-plat-desc">Pega los nombres y gira la ruleta en vivo frente a tu audiencia</span>
+          </a>
+          <a href="https://random.org/lists/" target="_blank" rel="noopener noreferrer" class="yp-plat-link">
+            <span class="yp-plat-name">Random.org</span>
+            <span class="yp-plat-desc">Mezcla aleatoria con entropía real y verificable</span>
+          </a>
+          <a href="https://sorteados.com/" target="_blank" rel="noopener noreferrer" class="yp-plat-link">
+            <span class="yp-plat-name">Sorteados</span>
+            <span class="yp-plat-desc">Sorteos con certificado descargable</span>
+          </a>
+          <a href="https://www.miniwebtool.com/random-name-picker/" target="_blank" rel="noopener noreferrer" class="yp-plat-link">
+            <span class="yp-plat-name">Name Picker</span>
+            <span class="yp-plat-desc">Selección aleatoria rápida y simple</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast" class="yp-toast"></div>
+</div>
+</Layout>
+
+<!-- SheetJS CDN -->
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script is:inline>
+/* ═══════════════════════════════════════════
+   PROCESADOR YAPE — LÓGICA COMPLETA
+   ═══════════════════════════════════════════ */
+
+/* ── Variables globales ── */
+let _rawRows      = null;
+let _filteredRows = null;
+let _parts        = [];
+let _listArr      = [];
+let _filteredArr  = [];
+let _currentPage  = 1;
+let _pageSize     = 100;
+let _ticket       = 2;
+let _debounceTimer;
+let _toastTimer;
+let _validPayments = 0;
+let _originalMontoTotal = 0;
+let _deletedCount = 0;
+let _selectedHour = 0;
+
+/* Step 3 pagination */
+let _tableParts     = [];
+let _tablePage      = 1;
+let _tablePageSize  = 50;
+let _tableDebounce;
+
+/* Date filter */
+let _availableDates = [];
+let _selectedDate   = 'all';
+
+/* ── Utilidades ── */
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function parseMonto(val) {
+  return parseFloat(String(val).replace(/[^0-9.]/g, '')) || 0;
+}
+
+function toast(msg, type) {
+  type = type || 'success';
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'yp-toast show ' + type;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { t.classList.remove('show'); }, 3500);
+}
+
+/* ── DOM refs ── */
+var dropZone       = document.getElementById('dropZone');
+var fileInput      = document.getElementById('fileInput');
+var browseLink     = document.getElementById('browseLink');
+var fileInfo       = document.getElementById('fileInfo');
+var fileName       = document.getElementById('fileName');
+var fileRows       = document.getElementById('fileRows');
+var removeFileBtn  = document.getElementById('removeFile');
+var progressWrap   = document.getElementById('progressWrap');
+var progressFill   = document.getElementById('progressFill');
+var progressText   = document.getElementById('progressText');
+var ticketInput    = document.getElementById('ticketInput');
+var generateBtn    = document.getElementById('generateBtn');
+var step3          = document.getElementById('step3');
+var step4          = document.getElementById('step4');
+var statsGrid      = document.getElementById('statsGrid');
+var tableNote      = document.getElementById('tableNote');
+var tableWrap      = document.getElementById('tableWrap');
+var searchInput    = document.getElementById('searchInput');
+var verifyPanel    = document.getElementById('verifyPanel');
+var rangeLabel     = document.getElementById('rangeLabel');
+var pageSizeSelect = document.getElementById('pageSizeSelect');
+var listContainer  = document.getElementById('listContainer');
+var pagination     = document.getElementById('pagination');
+var copyBtn        = document.getElementById('copyBtn');
+var dateFilter     = document.getElementById('dateFilter');
+var hourFilter     = document.getElementById('hourFilter');
+var dateCount      = document.getElementById('dateCount');
+var stepDate       = document.getElementById('stepDate');
+var searchPart     = document.getElementById('searchParticipant');
+var tableRange     = document.getElementById('tableRange');
+var tablePageSizeSel = document.getElementById('tablePageSize');
+var tablePagination  = document.getElementById('tablePagination');
+
+/* ── PASO 1: Carga de archivo ── */
+browseLink.addEventListener('click', function() { fileInput.click(); });
+dropZone.addEventListener('click', function(e) { if (e.target === dropZone || dropZone.contains(e.target)) fileInput.click(); });
+
+dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('over'); });
+dropZone.addEventListener('dragleave', function()  { dropZone.classList.remove('over'); });
+dropZone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  dropZone.classList.remove('over');
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+
+fileInput.addEventListener('change', function() {
+  if (fileInput.files.length) handleFile(fileInput.files[0]);
+});
+
+removeFileBtn.addEventListener('click', function() {
+  _rawRows = null;
+  _filteredRows = null;
+  fileInput.value = '';
+  fileInfo.style.display = 'none';
+  dropZone.style.display = '';
+  stepDate.style.display = 'none';
+  step3.style.display = 'none';
+  step4.style.display = 'none';
+  dateFilter.innerHTML = '<option value="all">Todas las fechas</option>';
+  _availableDates = [];
+  _selectedDate = 'all';
+  toast('Archivo eliminado');
+});
+
+function handleFile(file) {
+  if (!file) return;
+  var ext = file.name.split('.').pop().toLowerCase();
+  if (ext !== 'xlsx' && ext !== 'xls') {
+    toast('Solo se aceptan archivos .xlsx o .xls', 'error');
+    return;
+  }
+
+  dropZone.style.display = 'none';
+  progressWrap.style.display = '';
+  progressFill.style.width = '0%';
+  progressText.textContent = 'Leyendo archivo…';
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    setTimeout(function() {
+      try {
+        progressFill.style.width = '50%';
+        progressText.textContent = 'Procesando Excel…';
+        var wb = XLSX.read(e.target.result, { type: 'binary', cellDates: true });
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        /* ── Lectura robusta del Excel de Yape ──────────────────────────
+           El reporte de Yape tiene filas de título/metadata al inicio
+           (p.ej. "Reporte de Movimientos" en fila 2, headers en fila 5).
+           Buscamos la fila que contenga "tipo de transacción" y la usamos
+           como encabezado, sin importar en qué fila esté.
+        ─────────────────────────────────────────────────────────────── */
+        var rawArray = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        var headerRowIndex = -1;
+
+        for (var ri = 0; ri < Math.min(rawArray.length, 20); ri++) {
+          var rowCells = rawArray[ri];
+          for (var ci = 0; ci < rowCells.length; ci++) {
+            var cell = String(rowCells[ci]).toLowerCase().trim()
+              .normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // quitar tildes
+            if (cell.includes('tipo') && cell.includes('transac')) {
+              headerRowIndex = ri;
+              break;
+            }
+          }
+          if (headerRowIndex >= 0) break;
+        }
+
+        var rows;
+        if (headerRowIndex >= 0) {
+          rows = XLSX.utils.sheet_to_json(ws, { defval: '', range: headerRowIndex });
+        } else {
+          // fallback: leer normal
+          rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        }
+
+        _rawRows = rows;
+        progressFill.style.width = '100%';
+        progressText.textContent = '¡Listo!';
+
+        /* Detectar columna de fecha y extraer fechas únicas */
+        extractDates(_rawRows);
+
+        setTimeout(function() {
+          progressWrap.style.display = 'none';
+          fileName.textContent = escapeHtml(file.name);
+          fileRows.textContent = _rawRows.length.toLocaleString('es') + ' filas detectadas';
+          fileInfo.style.display = '';
+          toast('Archivo cargado — ' + _rawRows.length.toLocaleString('es') + ' filas detectadas');
+        }, 400);
+      } catch (err) {
+        progressWrap.style.display = 'none';
+        dropZone.style.display = '';
+        toast('Error al leer el archivo: ' + err.message, 'error');
+      }
+    }, 50);
+  };
+  reader.readAsBinaryString(file);
+}
+
+/* ── Extraer fechas únicas del Excel ── */
+function extractDates(rows) {
+  if (!rows || !rows.length) return;
+  var keys = Object.keys(rows[0]);
+  var cFecha = keys.find(function(k) {
+    var kl = k.toLowerCase().replace(/\s+/g, '');
+    return kl.includes('fecha') || kl.includes('date') || kl.includes('fechaoperacion') || kl.includes('fechadeoperacion');
+  });
+  if (!cFecha) { stepDate.style.display = 'none'; return; }
+
+  var dateSet = {};
+  for (var i = 0; i < rows.length; i++) {
+    var raw = rows[i][cFecha];
+    var d = normalizeDate(raw);
+    if (d) dateSet[d] = (dateSet[d] || 0) + 1;
+  }
+
+  /* Ordenar cronológicamente: convertimos DD/MM/YYYY → YYYYMMDD para comparar */
+  _availableDates = Object.keys(dateSet).sort(function(a, b) {
+    function toNum(d) {
+      var p = d.split('/');
+      return parseInt(p[2] || 0) * 10000 + parseInt(p[1] || 0) * 100 + parseInt(p[0] || 0);
+    }
+    return toNum(a) - toNum(b);
+  });
+  if (_availableDates.length <= 1) { stepDate.style.display = 'none'; return; }
+
+  dateFilter.innerHTML = '<option value="all">Todas las fechas (' + rows.length.toLocaleString('es') + ' filas)</option>';
+  _availableDates.forEach(function(d) {
+    var opt = document.createElement('option');
+    opt.value = d;
+    opt.textContent = d + ' — ' + dateSet[d].toLocaleString('es') + ' filas';
+    dateFilter.appendChild(opt);
+  });
+
+  _selectedDate = 'all';
+  dateCount.textContent = _availableDates.length + ' fechas detectadas';
+  stepDate.style.display = '';
+}
+
+function normalizeDate(val) {
+  if (!val) return null;
+  if (val instanceof Date) {
+    var dd = String(val.getDate()).padStart(2, '0');
+    var mm = String(val.getMonth() + 1).padStart(2, '0');
+    var yy = val.getFullYear();
+    return dd + '/' + mm + '/' + yy;
+  }
+  var s = String(val).trim();
+  /* dd/mm/yyyy or dd-mm-yyyy */
+  var m = s.match(/(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
+  if (m) {
+    var day = m[1].padStart(2, '0');
+    var mon = m[2].padStart(2, '0');
+    var year = m[3].length === 2 ? '20' + m[3] : m[3];
+    return day + '/' + mon + '/' + year;
+  }
+  return null;
+}
+
+function extractHour(val) {
+  if (!val) return 0;
+  if (val instanceof Date) {
+    return val.getHours();
+  }
+  var s = String(val).trim();
+  var m = s.match(/(?:^|\s)(\d{1,2}):(\d{2})/);
+  if (m) {
+    return parseInt(m[1]);
+  }
+  return 0;
+}
+
+dateFilter.addEventListener('change', function() {
+  _selectedDate = dateFilter.value;
+  applyDateFilter();
+  if (step3.style.display !== 'none') {
+    generateBtn.click();
+  }
+});
+
+hourFilter.addEventListener('change', function() {
+  _selectedHour = parseInt(hourFilter.value) || 0;
+  applyDateFilter();
+  if (step3.style.display !== 'none') {
+    generateBtn.click();
+  }
+});
+
+function applyDateFilter() {
+  if (!_rawRows) return;
+  
+  var keys = Object.keys(_rawRows[0]);
+  var cFecha = keys.find(function(k) {
+    var kl = k.toLowerCase().replace(/\s+/g, '');
+    return kl.includes('fecha') || kl.includes('date') || kl.includes('fechaoperacion') || kl.includes('fechadeoperacion');
+  });
+
+  _filteredRows = _rawRows.filter(function(row) {
+    var valFecha = row[cFecha];
+    
+    // 1. Filtrar por fecha
+    if (_selectedDate !== 'all') {
+      var d = normalizeDate(valFecha);
+      if (d !== _selectedDate) return false;
+    }
+    
+    // 2. Filtrar por hora
+    if (_selectedHour > 0) {
+      var h = extractHour(valFecha);
+      if (h < _selectedHour) return false;
+    }
+    
+    return true;
+  });
+
+  dateCount.textContent = _filteredRows.length.toLocaleString('es') + ' filas seleccionadas';
+}
+
+/* ── PASO 2: Generar lista ── */
+generateBtn.addEventListener('click', function() {
+  if (!_rawRows || !_rawRows.length) { toast('Sube un archivo Excel primero', 'error'); return; }
+
+  applyDateFilter();
+  var rowsToProcess = _filteredRows || _rawRows;
+
+  _ticket = parseFloat(ticketInput.value);
+  if (!_ticket || _ticket <= 0) { toast('Ingresa un valor de ticket válido', 'error'); return; }
+
+  var keys = Object.keys(rowsToProcess[0] || {});
+  function col(hint) {
+    return keys.find(function(k) {
+      return k.toLowerCase().replace(/\s+/g, '').includes(hint);
+    }) || null;
+  }
+
+  var cTipo   = col('tipo');
+  var cOrigen = col('origen');
+  var cMonto  = col('monto');
+
+  if (!cTipo)   { toast('Columna faltante: Tipo de Transacción', 'error'); return; }
+  if (!cOrigen) { toast('Columna faltante: Origen', 'error'); return; }
+  if (!cMonto)  { toast('Columna faltante: Monto', 'error'); return; }
+
+  generateBtn.disabled = true;
+  generateBtn.textContent = 'PROCESANDO…';
+  progressWrap.style.display = '';
+  progressFill.style.width = '0%';
+  progressText.textContent = 'Procesando pagos…';
+
+  processChunks(rowsToProcess, cTipo, cOrigen, cMonto, function(map, payCount) {
+    _validPayments = payCount;
+    if (payCount === 0) {
+      progressWrap.style.display = 'none';
+      generateBtn.disabled = false;
+      generateBtn.textContent = 'GENERAR LISTA';
+      toast('No se encontraron pagos válidos en el Excel', 'error');
+      return;
+    }
+
+    _parts = buildParticipants(map, _ticket);
+    _originalMontoTotal = _parts.reduce(function(s, p) { return s + p.monto; }, 0);
+    _deletedCount = 0;
+
+    buildListArray(_parts);
+    _filteredArr = _listArr.slice();
+    _currentPage = 1;
+
+    renderStats(_validPayments);
+    _tableParts = _parts.slice();
+    _tablePage = 1;
+    renderTablePage();
+    step3.style.display = '';
+
+    renderPage();
+    step4.style.display = '';
+
+    progressWrap.style.display = 'none';
+    generateBtn.disabled = false;
+    generateBtn.textContent = 'GENERAR LISTA';
+
+    step3.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toast('Lista generada — ' + _listArr.length.toLocaleString('es') + ' oportunidades calculadas');
+  });
+
+  function processChunks(rows, cT, cO, cM, onDone) {
+    var CHUNK = 500;
+    var i = 0;
+    var map = {};
+    var payCount = 0;
+
+    function next() {
+      var end = Math.min(i + CHUNK, rows.length);
+      for (; i < end; i++) {
+        var row  = rows[i];
+        var tipo = (row[cT] || '').toString().trim().toUpperCase();
+        if (tipo !== 'TE PAGÓ') continue;
+        var nom   = (row[cO] || '').toString().trim();
+        var monto = parseMonto(row[cM]);
+        if (!nom || monto <= 0) continue;
+        if (!map[nom]) map[nom] = 0;
+        map[nom] += monto;
+        payCount++;
+      }
+      var pct = Math.round((i / rows.length) * 100);
+      progressFill.style.width = pct + '%';
+      progressText.textContent = 'Procesando pagos… ' + pct + '%';
+
+      if (i < rows.length) {
+        setTimeout(next, 0);
+      } else {
+        onDone(map, payCount);
+      }
+    }
+    next();
+  }
+});
+
+function buildParticipants(map, ticket) {
+  return Object.entries(map).map(function(e) {
+    var nom   = e[0];
+    var total = e[1];
+    var monto = parseFloat(total.toFixed(2));
+    var ops   = Math.floor(monto / ticket);
+    var sob   = parseFloat((monto - ops * ticket).toFixed(2));
+    return { nom: nom, monto: monto, ops: ops, sob: sob, estado: sob > 0 ? 'Observado' : 'Correcto' };
+  }).sort(function(a, b) { return b.ops - a.ops; });
+}
+
+function buildListArray(parts) {
+  _listArr = [];
+  for (var k = 0; k < parts.length; k++) {
+    for (var j = 0; j < parts[k].ops; j++) {
+      _listArr.push(parts[k].nom);
+    }
+  }
+}
+
+/* ── PASO 3: Stats & Table ── */
+function renderStats(validPayments) {
+  var conSobrante = _parts.filter(function(p) { return p.sob > 0; }).length;
+
+  var stats = [
+    { val: _parts.length.toLocaleString('es'),     label: 'Participantes únicos' },
+    { val: _listArr.length.toLocaleString('es'),    label: 'Nombres en lista' },
+    { val: 'S/ ' + _originalMontoTotal.toLocaleString('es', {minimumFractionDigits:2, maximumFractionDigits:2}), label: 'Monto total' },
+    { val: validPayments.toLocaleString('es'),      label: 'Pagos válidos' },
+    { val: conSobrante.toLocaleString('es'),        label: 'Con sobrante' },
+    { val: _deletedCount.toLocaleString('es'),      label: 'Eliminados' },
+  ];
+
+  statsGrid.innerHTML = stats.map(function(s) {
+    return '<div class="yp-stat"><span class="yp-stat-val">' + escapeHtml(s.val) + '</span><span class="yp-stat-label">' + escapeHtml(s.label) + '</span></div>';
+  }).join('');
+}
+
+/* ── Step 3 Search ── */
+searchPart.addEventListener('input', function() {
+  clearTimeout(_tableDebounce);
+  _tableDebounce = setTimeout(function() {
+    var q = searchPart.value.trim().toLowerCase();
+    if (!q) {
+      _tableParts = _parts.slice();
+    } else {
+      _tableParts = _parts.filter(function(p) { return p.nom.toLowerCase().includes(q); });
+    }
+    _tablePage = 1;
+    renderTablePage();
+  }, 300);
+});
+
+tablePageSizeSel.addEventListener('change', function() {
+  _tablePageSize = parseInt(tablePageSizeSel.value);
+  _tablePage = 1;
+  renderTablePage();
+});
+
+function renderTablePage() {
+  var arr = _tableParts;
+  var total = arr.length;
+  var totalPgs = Math.max(1, Math.ceil(total / _tablePageSize));
+  if (_tablePage > totalPgs) _tablePage = totalPgs;
+  var start = (_tablePage - 1) * _tablePageSize;
+  var end = Math.min(start + _tablePageSize, total);
+  var visible = arr.slice(start, end);
+
+  tableRange.textContent = total === 0
+    ? '0 participantes'
+    : 'Mostrando ' + (start + 1).toLocaleString('es') + '–' + end.toLocaleString('es') + ' de ' + total.toLocaleString('es') + ' participantes';
+
+  if (total === 0) {
+    tableWrap.innerHTML = '<div class="yp-empty">No se encontraron participantes</div>';
+    tablePagination.innerHTML = '';
+    return;
+  }
+
+  var html = '<table class="yp-table"><thead><tr>'
+    + '<th>Participante</th><th>Monto total</th><th>Oportunidades</th><th>Sobrante</th><th>Estado</th><th style="text-align: center;">Acciones</th>'
+    + '</tr></thead><tbody>';
+
+  for (var i = 0; i < visible.length; i++) {
+    var p = visible[i];
+    var sobClass = p.sob > 0 ? 'yp-chip amber' : 'yp-mono muted';
+    var sobText  = 'S/ ' + p.sob.toFixed(2);
+    var estClass = p.estado === 'Correcto' ? 'yp-chip green' : 'yp-chip red';
+
+    html += '<tr>'
+      + '<td>' + escapeHtml(p.nom) + '</td>'
+      + '<td class="yp-mono">S/ ' + p.monto.toFixed(2) + '</td>'
+      + '<td><span class="yp-chip green">' + p.ops + '</span></td>'
+      + '<td><span class="' + sobClass + '">' + sobText + '</span></td>'
+      + '<td><span class="' + estClass + '">' + escapeHtml(p.estado) + '</span></td>'
+      + '<td style="text-align: center;"><button class="delete-part-btn text-xs font-bold px-2.5 py-1.5 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 hover:border-red-500/30 transition cursor-pointer" data-name="' + escapeHtml(p.nom) + '">❌ ELIMINAR</button></td>'
+      + '</tr>';
+  }
+
+  html += '</tbody></table>';
+  tableWrap.innerHTML = html;
+
+  // Bind click event to delete buttons
+  tableWrap.querySelectorAll('.delete-part-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var nom = btn.dataset.name;
+      if (!nom) return;
+      if (confirm('¿Estás seguro de que deseas eliminar al participante "' + nom + '"? Se borrarán todas sus oportunidades del sorteo.')) {
+        // 1. Eliminar de _parts
+        _parts = _parts.filter(function(p) { return p.nom !== nom; });
+        _deletedCount += 1;
+        
+        // 2. Actualizar búsqueda y tabla filtrada
+        var q = searchPart.value.trim().toLowerCase();
+        if (!q) {
+          _tableParts = _parts.slice();
+        } else {
+          _tableParts = _parts.filter(function(p) { return p.nom.toLowerCase().includes(q); });
+        }
+        
+        // 3. Re-generar lista plana _listArr
+        buildListArray(_parts);
+        
+        // 4. Actualizar lista para sorteo filtrada
+        var qs = searchInput.value.trim().toLowerCase();
+        if (!qs) {
+          _filteredArr = _listArr.slice();
+        } else {
+          _filteredArr = _listArr.filter(function(n) { return n.toLowerCase().includes(qs); });
+        }
+        
+        // 5. Reset a la primera página de la tabla
+        _tablePage = 1;
+        _currentPage = 1;
+        
+        // 6. Renderizar stats y tablas
+        renderStats(_validPayments);
+        renderTablePage();
+        renderPage();
+        
+        toast('✓ Participante "' + nom + '" eliminado. Listas actualizadas.');
+      }
+    });
+  });
+
+  renderTablePagination(totalPgs);
+}
+
+function renderTablePagination(totalPgs) {
+  if (totalPgs <= 1) { tablePagination.innerHTML = ''; return; }
+
+  var btns = [];
+  btns.push('<button class="yp-pag-btn" data-tpg="prev"' + (_tablePage === 1 ? ' disabled' : '') + '>← Anterior</button>');
+
+  var pages = [1];
+  for (var i = Math.max(2, _tablePage - 2); i <= Math.min(totalPgs - 1, _tablePage + 2); i++) pages.push(i);
+  if (totalPgs > 1) pages.push(totalPgs);
+  pages = pages.filter(function(v, idx, a) { return a.indexOf(v) === idx; });
+
+  for (var j = 0; j < pages.length; j++) {
+    if (j > 0 && pages[j] - pages[j - 1] > 1) {
+      btns.push('<span class="yp-pag-dots">…</span>');
+    }
+    btns.push('<button class="yp-pag-btn' + (pages[j] === _tablePage ? ' active' : '') + '" data-tpg="' + pages[j] + '">' + pages[j] + '</button>');
+  }
+
+  btns.push('<button class="yp-pag-btn" data-tpg="next"' + (_tablePage === totalPgs ? ' disabled' : '') + '>Siguiente →</button>');
+
+  tablePagination.innerHTML = btns.join('');
+
+  tablePagination.querySelectorAll('.yp-pag-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var pg = btn.dataset.tpg;
+      if (pg === 'prev') _tablePage = Math.max(1, _tablePage - 1);
+      else if (pg === 'next') _tablePage = Math.min(totalPgs, _tablePage + 1);
+      else _tablePage = parseInt(pg);
+      renderTablePage();
+      tableWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+/* ── PASO 4: Búsqueda y verificación ── */
+searchInput.addEventListener('input', function() {
+  clearTimeout(_debounceTimer);
+  _debounceTimer = setTimeout(function() {
+    var q = searchInput.value.trim().toLowerCase();
+    if (!q) {
+      _filteredArr = _listArr.slice();
+      verifyPanel.style.display = 'none';
+    } else {
+      _filteredArr = _listArr.filter(function(n) { return n.toLowerCase().includes(q); });
+      showVerification(q);
+    }
+    _currentPage = 1;
+    renderPage();
+  }, 300);
+});
+
+function showVerification(query) {
+  var match = _parts.find(function(p) { return p.nom.toLowerCase() === query; });
+  if (!match) {
+    verifyPanel.style.display = 'none';
+    return;
+  }
+
+  var vecesEnLista = _listArr.filter(function(n) { return n.toLowerCase() === query; }).length;
+  var isOk = match.ops === vecesEnLista;
+  var verText = isOk ? '✓ Correcto' : '✗ Error: revisar cálculo';
+  var verClass = isOk ? 'ver-ok' : 'ver-err';
+
+  verifyPanel.innerHTML =
+    '<div class="yp-verify-grid">'
+    + '<div class="yp-vrow"><span class="yp-vlabel">Nombre:</span><span class="yp-vval">' + escapeHtml(match.nom) + '</span></div>'
+    + '<div class="yp-vrow"><span class="yp-vlabel">Monto total enviado:</span><span class="yp-vval yp-mono">S/ ' + match.monto.toFixed(2) + '</span></div>'
+    + '<div class="yp-vrow"><span class="yp-vlabel">Valor del ticket:</span><span class="yp-vval yp-mono">S/ ' + _ticket.toFixed(2) + '</span></div>'
+    + '<div class="yp-vrow"><span class="yp-vlabel">Oportunidades calculadas:</span><span class="yp-vval">' + match.ops + '</span></div>'
+    + '<div class="yp-vrow"><span class="yp-vlabel">Veces en lista final:</span><span class="yp-vval">' + vecesEnLista + '</span></div>'
+    + '<div class="yp-vrow"><span class="yp-vlabel">Sobrante:</span><span class="yp-vval yp-mono">S/ ' + match.sob.toFixed(2) + '</span></div>'
+    + '<div class="yp-vrow"><span class="yp-vlabel">Estado:</span><span class="yp-vval ' + (match.estado === 'Correcto' ? 'st-ok' : 'st-obs') + '">' + escapeHtml(match.estado) + '</span></div>'
+    + '<div class="yp-vrow"><span class="yp-vlabel">Verificación:</span><span class="yp-vval ' + verClass + '">' + verText + '</span></div>'
+    + '</div>';
+  verifyPanel.style.display = '';
+}
+
+/* ── Paginación ── */
+pageSizeSelect.addEventListener('change', function() {
+  _pageSize = parseInt(pageSizeSelect.value);
+  _currentPage = 1;
+  renderPage();
+});
+
+function renderPage() {
+  var arr      = _filteredArr;
+  var total    = arr.length;
+  var totalPgs = Math.max(1, Math.ceil(total / _pageSize));
+  if (_currentPage > totalPgs) _currentPage = totalPgs;
+  var start    = (_currentPage - 1) * _pageSize;
+  var end      = Math.min(start + _pageSize, total);
+  var slice    = arr.slice(start, end);
+
+  if (total === 0) {
+    listContainer.innerHTML = '<div class="yp-empty">No se encontraron resultados</div>';
+    rangeLabel.textContent = '0 nombres';
+    pagination.innerHTML = '';
+    return;
+  }
+
+  listContainer.innerHTML = slice.map(function(nom, i) {
+    return '<div class="yp-list-item"><span class="yp-list-num">' + (start + i + 1).toLocaleString('es') + '</span><span class="yp-list-name">' + escapeHtml(nom) + '</span></div>';
+  }).join('');
+
+  rangeLabel.textContent = 'Mostrando ' + (start + 1).toLocaleString('es') + '–' + end.toLocaleString('es') + ' de ' + total.toLocaleString('es') + ' nombres';
+  renderPagination(totalPgs);
+}
+
+function renderPagination(totalPgs) {
+  if (totalPgs <= 1) { pagination.innerHTML = ''; return; }
+
+  var btns = [];
+  btns.push('<button class="yp-pag-btn" data-pg="prev"' + (_currentPage === 1 ? ' disabled' : '') + '>← Anterior</button>');
+
+  var pages = [];
+  pages.push(1);
+  for (var i = Math.max(2, _currentPage - 2); i <= Math.min(totalPgs - 1, _currentPage + 2); i++) pages.push(i);
+  if (totalPgs > 1) pages.push(totalPgs);
+  pages = pages.filter(function(v, idx, a) { return a.indexOf(v) === idx; });
+
+  for (var j = 0; j < pages.length; j++) {
+    if (j > 0 && pages[j] - pages[j - 1] > 1) {
+      btns.push('<span class="yp-pag-dots">…</span>');
+    }
+    btns.push('<button class="yp-pag-btn' + (pages[j] === _currentPage ? ' active' : '') + '" data-pg="' + pages[j] + '">' + pages[j] + '</button>');
+  }
+
+  btns.push('<button class="yp-pag-btn" data-pg="next"' + (_currentPage === totalPgs ? ' disabled' : '') + '>Siguiente →</button>');
+
+  pagination.innerHTML = btns.join('');
+
+  pagination.querySelectorAll('.yp-pag-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var pg = btn.dataset.pg;
+      if (pg === 'prev') _currentPage = Math.max(1, _currentPage - 1);
+      else if (pg === 'next') _currentPage = Math.min(totalPgs, _currentPage + 1);
+      else _currentPage = parseInt(pg);
+      renderPage();
+      listContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+/* ── Copiar lista ── */
+copyBtn.addEventListener('click', copyFullList);
+
+function copyFullList() {
+  if (!_listArr.length) { toast('No hay lista generada', 'error'); return; }
+  var text = _listArr.join('\n');
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(onCopySuccess).catch(function() { fallbackCopy(text); });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;width:1px;height:1px';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  onCopySuccess();
+}
+
+function onCopySuccess() {
+  copyBtn.textContent = '¡LISTA COPIADA! PÉGALA EN TU PLATAFORMA';
+  toast('✓ ' + _listArr.length.toLocaleString('es') + ' nombres copiados al portapapeles');
+  setTimeout(function() { copyBtn.textContent = 'COPIAR LISTA COMPLETA'; }, 4000);
+}
+</script>
+
+<style is:inline>
+/* ═══════════════════════════════════════════
+   PROCESADOR YAPE — ESTILOS
+   ═══════════════════════════════════════════ */
+:root {
+  --yp-bg:          #0A0E1A;
+  --yp-card:        #111827;
+  --yp-card-inner:  #1A2235;
+  --yp-border:      #1E2D45;
+  --yp-border-lt:   #2A3F5F;
+  --yp-gold:        #C9A84C;
+  --yp-gold-h:      #E0BF6A;
+  --yp-green:       #4ADE80;
+  --yp-red:         #F87171;
+  --yp-text:        #F0F4FF;
+  --yp-text2:       #8A9BB5;
+  --yp-text3:       #4A5E7A;
+}
+
+.yp-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 16px 80px;
+}
+
+/* ── Header ── */
+.yp-header { text-align: center; margin-bottom: 36px; padding-top: 80px; }
+.yp-logo { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; }
+.yp-logo img { width: 36px; height: 36px; }
+.yp-logo-text { font-family: 'Cinzel', serif; font-weight: 700; font-size: 18px; color: var(--yp-text); letter-spacing: 0.14em; }
+.yp-eyebrow { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; letter-spacing: 0.25em; color: var(--yp-gold); text-transform: uppercase; margin-bottom: 8px; }
+.yp-title { font-family: 'Cinzel', serif; font-size: 32px; font-weight: 700; letter-spacing: 0.12em; color: var(--yp-text); margin: 0 0 10px; }
+.yp-subtitle { font-family: 'Barlow', sans-serif; font-size: 15px; color: var(--yp-text2); margin: 0; }
+
+/* ── Card ── */
+.yp-card {
+  background: var(--yp-card);
+  border: 1px solid var(--yp-border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+
+/* ── Step header ── */
+.yp-step-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 20px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--yp-border);
+}
+.yp-step-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--yp-gold); color: var(--yp-bg);
+  font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.yp-step-label {
+  font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700;
+  letter-spacing: 0.12em; color: var(--yp-text2); text-transform: uppercase;
+}
+
+/* ── Drop zone ── */
+.yp-drop {
+  border: 2px dashed var(--yp-border-lt); border-radius: 12px;
+  padding: 40px 20px; text-align: center; cursor: pointer;
+  background: var(--yp-card-inner); transition: border-color 0.2s, background 0.2s;
+}
+.yp-drop:hover, .yp-drop.over { border-color: var(--yp-gold); background: rgba(201,168,76,0.05); }
+.yp-drop-icon { font-size: 40px; margin-bottom: 12px; }
+.yp-drop-main { font-family: 'Barlow', sans-serif; font-size: 16px; color: var(--yp-text); margin: 0 0 6px; font-weight: 500; }
+.yp-drop-sub { font-family: 'Barlow', sans-serif; font-size: 13px; color: var(--yp-text3); margin: 0; }
+.yp-drop-link { color: var(--yp-gold); cursor: pointer; text-decoration: underline; }
+
+/* ── File info ── */
+.yp-file-info {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--yp-card-inner); border: 1px solid var(--yp-border);
+  border-radius: 12px; padding: 14px 18px;
+}
+.yp-file-icon { font-size: 24px; }
+.yp-file-details { flex: 1; }
+.yp-file-name { display: block; font-family: 'Barlow', sans-serif; font-size: 14px; color: var(--yp-text); font-weight: 500; }
+.yp-file-rows { display: block; font-family: 'Barlow', sans-serif; font-size: 12px; color: var(--yp-text2); margin-top: 2px; }
+.yp-file-remove {
+  background: none; border: 1px solid var(--yp-border); border-radius: 8px;
+  color: var(--yp-text3); font-size: 14px; padding: 6px 10px; cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.yp-file-remove:hover { color: var(--yp-red); border-color: var(--yp-red); }
+
+/* ── Progress bar ── */
+.yp-progress-wrap { margin-top: 16px; }
+.yp-progress-bar { height: 6px; background: var(--yp-card-inner); border-radius: 4px; overflow: hidden; }
+.yp-progress-fill { height: 100%; background: var(--yp-gold); border-radius: 4px; transition: width 0.3s ease; width: 0%; }
+.yp-progress-text { display: block; font-family: 'Barlow', sans-serif; font-size: 12px; color: var(--yp-text2); margin-top: 6px; }
+
+/* ── Ticket row ── */
+.yp-ticket-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.yp-ticket-label { display: flex; align-items: center; gap: 6px; }
+.yp-ticket-prefix { font-family: 'Barlow', sans-serif; font-size: 16px; font-weight: 600; color: var(--yp-text2); }
+.yp-ticket-input { width: 130px; }
+
+/* ── Inputs ── */
+.yp-input {
+  background: var(--yp-card-inner); border: 1px solid var(--yp-border);
+  border-radius: 10px; color: var(--yp-text); font-family: 'Barlow', sans-serif;
+  padding: 10px 14px; font-size: 15px; transition: border-color 0.2s;
+}
+.yp-input:focus { border-color: var(--yp-gold); outline: none; box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+
+.yp-select {
+  background: var(--yp-card-inner); border: 1px solid var(--yp-border);
+  border-radius: 10px; color: var(--yp-text); font-family: 'Barlow', sans-serif;
+  padding: 8px 12px; font-size: 13px; cursor: pointer;
+}
+
+/* ── Gold button ── */
+.yp-btn-gold {
+  background: var(--yp-gold); color: var(--yp-bg);
+  font-family: 'Cinzel', serif; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  border: none; border-radius: 10px; padding: 14px 28px;
+  cursor: pointer; transition: background 0.2s, transform 0.1s;
+  font-size: 14px;
+}
+.yp-btn-gold:hover { background: var(--yp-gold-h); }
+.yp-btn-gold:active { transform: scale(0.97); }
+.yp-btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.yp-btn-copy { width: 100%; margin-top: 20px; padding: 16px 28px; font-size: 15px; }
+
+/* ── Stats grid ── */
+.yp-stats {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.yp-stat {
+  background: rgba(26, 34, 53, 0.45);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 16px;
+  padding: 18px 12px;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 105px;
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+.yp-stat:hover {
+  border-color: rgba(201, 168, 76, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 0 15px rgba(201, 168, 76, 0.05);
+}
+.yp-stat-val {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--yp-text);
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+.yp-stat-label {
+  display: block;
+  font-size: 10px;
+  color: var(--yp-text2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 8px;
+  font-family: 'Barlow', sans-serif;
+  line-height: 1.3;
+}
+
+/* ── Table ── */
+.yp-table-note { font-family: 'Barlow', sans-serif; font-size: 12px; color: var(--yp-text3); margin-bottom: 10px; }
+.yp-table-wrap { border: 1px solid var(--yp-border); border-radius: 12px; overflow: hidden; overflow-x: auto; }
+.yp-table { width: 100%; border-collapse: collapse; }
+.yp-table th {
+  background: #0D1520; color: var(--yp-text2); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 14px;
+  border-bottom: 1px solid var(--yp-border); text-align: left;
+  font-family: 'Barlow', sans-serif;
+}
+.yp-table td {
+  padding: 10px 14px; color: var(--yp-text); font-size: 13px;
+  border-bottom: 1px solid var(--yp-border); font-family: 'Barlow', sans-serif;
+}
+.yp-table tr:last-child td { border-bottom: none; }
+.yp-table tr:hover td { background: var(--yp-card-inner); }
+
+/* ── Chips ── */
+.yp-chip {
+  display: inline-block; border-radius: 99px; padding: 3px 12px;
+  font-size: 12px; font-weight: 500; font-family: 'Barlow', sans-serif;
+}
+.yp-chip.green { background: rgba(74,222,128,0.12); color: var(--yp-green); border: 1px solid rgba(74,222,128,0.25); }
+.yp-chip.red   { background: rgba(248,113,113,0.12); color: var(--yp-red);   border: 1px solid rgba(248,113,113,0.25); }
+.yp-chip.amber { background: rgba(251,191,36,0.12);  color: #FBB524;         border: 1px solid rgba(251,191,36,0.25); }
+
+.yp-mono { font-family: 'Courier New', monospace; }
+.yp-mono.muted { color: var(--yp-text3); }
+
+/* ── Search ── */
+.yp-search { width: 100%; margin-bottom: 16px; box-sizing: border-box; }
+
+/* ── Date filter ── */
+.yp-date-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.yp-date-select { flex: 1; min-width: 200px; padding: 10px 14px; font-size: 14px; }
+.yp-date-count { font-family: 'Barlow', sans-serif; font-size: 13px; color: var(--yp-text2); }
+
+/* ── Verify panel ── */
+.yp-verify {
+  background: var(--yp-card-inner); border: 1px solid var(--yp-border);
+  border-radius: 12px; padding: 18px 22px; margin-bottom: 20px;
+}
+.yp-verify-grid { display: grid; gap: 8px; }
+.yp-vrow { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 4px 0; }
+.yp-vlabel { font-family: 'Barlow', sans-serif; font-size: 13px; color: var(--yp-text2); }
+.yp-vval { font-family: 'Barlow', sans-serif; font-size: 14px; color: var(--yp-text); font-weight: 500; }
+.ver-ok { color: var(--yp-green); }
+.ver-err { color: var(--yp-red); }
+.st-ok  { color: var(--yp-green); }
+.st-obs { color: var(--yp-red); }
+
+/* ── List ── */
+.yp-list-toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px; flex-wrap: wrap; gap: 10px;
+}
+.yp-range { font-family: 'Barlow', sans-serif; font-size: 13px; color: var(--yp-text2); }
+
+.yp-list-container {
+  border: 1px solid var(--yp-border); border-radius: 12px; overflow: hidden;
+  max-height: 480px; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: var(--yp-gold) transparent;
+}
+.yp-list-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 9px 14px; border-bottom: 1px solid var(--yp-border);
+  transition: background 0.1s;
+}
+.yp-list-item:hover { background: var(--yp-card-inner); }
+.yp-list-item:last-child { border-bottom: none; }
+.yp-list-num { font-size: 12px; color: var(--yp-text3); min-width: 48px; font-family: 'Courier New', monospace; }
+.yp-list-name { font-size: 14px; color: var(--yp-text); font-family: 'Barlow', sans-serif; }
+
+.yp-empty {
+  text-align: center; padding: 40px 20px;
+  font-family: 'Barlow', sans-serif; font-size: 14px; color: var(--yp-text3);
+}
+
+/* ── Pagination ── */
+.yp-pagination { display: flex; align-items: center; gap: 6px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
+.yp-pag-btn {
+  padding: 6px 12px; border: 1px solid var(--yp-border); border-radius: 8px;
+  background: var(--yp-card-inner); color: var(--yp-text2); cursor: pointer;
+  font-family: 'Barlow', sans-serif; font-size: 13px;
+  transition: background 0.15s, color 0.15s;
+}
+.yp-pag-btn:hover { background: var(--yp-border-lt); color: var(--yp-text); }
+.yp-pag-btn.active { background: var(--yp-gold); color: var(--yp-bg); border-color: var(--yp-gold); font-weight: 600; }
+.yp-pag-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.yp-pag-dots { color: var(--yp-text3); font-size: 14px; padding: 0 4px; }
+
+/* ── Platforms ── */
+.yp-platforms { margin-top: 32px; }
+.yp-plat-title {
+  font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.15em; color: var(--yp-text2); text-transform: uppercase;
+  margin-bottom: 14px; text-align: center;
+}
+.yp-plat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.yp-plat-link {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 18px; border: 1px solid var(--yp-border);
+  border-radius: 12px; background: var(--yp-card-inner);
+  color: var(--yp-text); text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.yp-plat-link:hover { border-color: var(--yp-gold); background: rgba(201,168,76,0.05); }
+.yp-plat-link.featured { border-color: var(--yp-gold); grid-column: 1 / -1; }
+.yp-plat-badge {
+  display: inline-block; width: fit-content;
+  font-family: 'Cinzel', serif; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.12em; color: var(--yp-bg); background: var(--yp-gold);
+  padding: 2px 10px; border-radius: 99px; margin-bottom: 4px;
+}
+.yp-plat-name { font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 600; color: var(--yp-text); }
+.yp-plat-desc { font-family: 'Barlow', sans-serif; font-size: 12px; color: var(--yp-text3); }
+
+/* ── Toast ── */
+.yp-toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  background: var(--yp-card-inner); border: 1px solid var(--yp-border-lt);
+  border-radius: 12px; padding: 12px 20px;
+  color: var(--yp-text); font-size: 14px; font-family: 'Barlow', sans-serif;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  opacity: 0; transition: opacity 0.25s, transform 0.25s;
+  transform: translateY(8px); pointer-events: none;
+  max-width: 420px;
+}
+.yp-toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.yp-toast.success { border-color: rgba(74,222,128,0.3); }
+.yp-toast.error { border-color: rgba(248,113,113,0.3); color: var(--yp-red); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .yp-page { padding: 16px 12px 60px; }
+  .yp-card { padding: 20px 16px; }
+  .yp-title { font-size: 22px; }
+  .yp-stats { grid-template-columns: repeat(2, 1fr); }
+  .yp-stat-val { font-size: 20px; }
+  .yp-plat-grid { grid-template-columns: 1fr; }
+  .yp-plat-link.featured { grid-column: auto; }
+  .yp-ticket-row { flex-direction: column; align-items: stretch; }
+  .yp-ticket-input { width: 100%; }
+  .yp-vrow { flex-direction: column; align-items: flex-start; gap: 2px; }
+}
+</style>

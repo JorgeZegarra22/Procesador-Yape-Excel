@@ -1,0 +1,16 @@
+{
+  "name": "Ninja Rifas",
+  "short_name": "Ninja Rifas",
+  "description": "Plataforma oficial de sorteos y rifas premium de Ninja Rifas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1024",
+  "theme_color": "#0a1024",
+  "icons": [
+    {
+      "src": "/Logoo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

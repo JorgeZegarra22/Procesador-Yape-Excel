@@ -1,0 +1,99 @@
+---
+import TikTokBrandIcon from '@/assets/svg/tiktok-brand.svg'
+import KickBrandIcon from '@/assets/svg/kick.svg'
+import InstagramIcon from '@/assets/svg/instagram.svg'
+import Separator from '@/components/Separator.astro'
+---
+
+<footer class="footer-section relative overflow-hidden bg-theme-midnight">
+  <div class="footer-bg" aria-hidden="true"></div>
+
+  <div class="relative z-10">
+    <Separator
+      lineColor="gold"
+      glowSize="md"
+      class="animate-fade-in animate-delay-1100 mb-10 sm:mb-14 w-full"
+    />
+
+    <div class="mb-12 flex w-full flex-row items-center justify-center sm:mb-14">
+      <nav
+        class="animate-fade-in animate-delay-1100 relative z-10 mx-auto grid w-full max-w-4xl grid-cols-1 gap-3 py-6 sm:grid-cols-3 sm:gap-6 lg:gap-10"
+        aria-label="Redes sociales de Masoku"
+      >
+        <a
+          href="https://kick.com/masokugg"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="--brand: #00d84d;"
+          class="group relative flex min-h-11 w-full items-center justify-center gap-2 px-4 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
+          aria-label="Seguir a Masoku en Kick"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-x-8 top-1/2 -z-10 h-10 -translate-y-1/2 rounded-full bg-[var(--brand)] opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-30 group-focus-visible:opacity-30"
+          ></span>
+          <KickBrandIcon
+            class="size-6 text-[#00d84d] transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-110 group-hover:[filter:drop-shadow(0_0_12px_var(--brand))] sm:size-7"
+            aria-hidden="true"
+          />
+          <span
+            class="relative font-cinzel text-sm font-semibold tracking-wider text-white transition-colors duration-300 after:absolute after:-bottom-1.5 after:left-1/2 after:h-px after:w-0 after:-translate-x-1/2 after:bg-[var(--brand)] after:transition-all after:duration-300 group-hover:text-white group-hover:after:w-full sm:text-base"
+            >/masokugg</span
+          >
+        </a>
+
+        <a
+          href="https://www.tiktok.com/@masokugg"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="--brand: #25f4ee;"
+          class="group relative flex min-h-11 w-full items-center justify-center gap-2 px-4 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
+          aria-label="Seguir a Masoku en TikTok"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-x-8 top-1/2 -z-10 h-10 -translate-y-1/2 rounded-full bg-[var(--brand)] opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-30 group-focus-visible:opacity-30"
+          ></span>
+          <TikTokBrandIcon
+            class="size-6 text-white transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-110 group-hover:[filter:drop-shadow(0_0_12px_var(--brand))] sm:size-7"
+            aria-hidden="true"
+          />
+          <span
+            class="relative font-cinzel text-sm font-semibold tracking-wider text-white transition-colors duration-300 after:absolute after:-bottom-1.5 after:left-1/2 after:h-px after:w-0 after:-translate-x-1/2 after:bg-[var(--brand)] after:transition-all after:duration-300 group-hover:text-white group-hover:after:w-full sm:text-base"
+            >/masokugg</span
+          >
+        </a>
+
+        <a
+          href="https://www.instagram.com/masokugg/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="--brand: #ffffff;"
+          class="group relative flex min-h-11 w-full items-center justify-center gap-2 px-4 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80"
+          aria-label="Seguir a Masoku en Instagram"
+        >
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-x-8 top-1/2 -z-10 h-10 -translate-y-1/2 rounded-full bg-[var(--brand)] opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-30 group-focus-visible:opacity-30"
+          ></span>
+          <InstagramIcon
+            class="size-6 text-white transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-110 group-hover:[filter:drop-shadow(0_0_12px_var(--brand))] sm:size-7"
+            aria-hidden="true"
+          />
+          <span
+            class="relative font-cinzel text-sm font-semibold tracking-wider text-white transition-colors duration-300 after:absolute after:-bottom-1.5 after:left-1/2 after:h-px after:w-0 after:-translate-x-1/2 after:bg-[var(--brand)] after:transition-all after:duration-300 group-hover:text-white group-hover:after:w-full sm:text-base"
+            >/masokugg</span
+          >
+        </a>
+      </nav>
+    </div>
+
+    <div class="pb-2 font-cinzel mt-6 sm:mt-8">
+      <p class="text-center text-[0.7rem] tracking-[0.2em] text-white/60 sm:text-xs">
+        <span>© 2026 Ninja Rifas</span>
+        <span aria-hidden="true" class="mx-2 text-theme-gold/40">·</span>
+        <span class="text-white/45">TODOS LOS DERECHOS RESERVADOS</span>
+      </p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,27 @@
+{
+  "redirects": [
+    {
+      "source": "/((?!^/?$).+)/",
+      "destination": "/$1",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/2024",
+      "destination": "https://2024.infolavelada.com"
+    },
+    {
+      "source": "/2024/:path*",
+      "destination": "https://2024.infolavelada.com/:path*"
+    },
+    {
+      "source": "/2025",
+      "destination": "https://2025.infolavelada.com"
+    },
+    {
+      "source": "/2025/:path*",
+      "destination": "https://2025.infolavelada.com/:path*"
+    }
+  ]
+}
