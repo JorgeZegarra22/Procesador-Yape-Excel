@@ -11,7 +11,6 @@
 
 > **Procesador Yape Excel** es una herramienta administrativa y de análisis de datos de alto rendimiento desarrollada en **Astro**. Su objetivo principal es recibir reportes de movimientos oficiales de **Yape** en formato `.xlsx` o `.xls`, normalizar sus datos financieros en tiempo real, filtrar por criterios cronológicos específicos, calcular oportunidades/tickets de sorteos según montos consolidados, y generar bases planas optimizadas para plataformas de sorteos en vivo.
 
-Todo el procesamiento pesado se realiza de forma **asíncrona en el cliente**, garantizando interfaces extremadamente fluidas a **60 FPS** incluso al procesar bases de datos con decenas de miles de registros.
 
 > [!IMPORTANT]
 > **RECUERDA:** El sistema procesa y muestra **únicamente** las transacciones de tipo **TE PAGÓ** (dinero recibido). Las transacciones de tipo **PAGASTE** (dinero enviado) u otros egresos son descartados de forma automática para calcular oportunidades válidas.
